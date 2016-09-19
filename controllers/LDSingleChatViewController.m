@@ -382,13 +382,22 @@
         }];
     }
     if (message.messageType == MESSAGE_TYPE_VIDEO) {
-        //视频 聊天
-        LDChatModel *chatModel = (LDChatModel*)[[LDClient sharedInstance].chatListModel itemWithID:self.chatModel.ID];
-        LDWebRtcVideoViewController *noteVC = [[LDWebRtcVideoViewController alloc]initWithChatModel:chatModel];
-        
-        noteVC.isVideo = YES;
-        noteVC.isRequest = NO;
-        [self.navigationController pushViewController:noteVC animated:YES];
+        NSString *keyString = [NSString stringWithFormat:@"key_%lld",message.ID];
+        NSUserDefaults *userDef = [NSUserDefaults standardUserDefaults];
+        if(![userDef boolForKey:keyString]){
+            NSString *keyString = [NSString stringWithFormat:@"key_%lld",message.ID];
+            [userDef setBool:YES forKey:keyString];
+            [userDef synchronize];
+            //视频 聊天
+            LDChatModel *chatModel = (LDChatModel*)[[LDClient sharedInstance].chatListModel itemWithID:self.chatModel.ID];
+            LDWebRtcVideoViewController *noteVC = [[LDWebRtcVideoViewController alloc]initWithChatModel:chatModel];
+            
+            noteVC.isVideo = YES;
+            noteVC.isRequest = NO;
+            [self.navigationController pushViewController:noteVC animated:YES];
+
+        };
+     
     }else  if (message.messageType == MESSAGE_TYPE_VOICE){
         //音频 聊天
         LDChatModel *chatModel = (LDChatModel*)[[LDClient sharedInstance].chatListModel itemWithID:self.chatModel.ID];
